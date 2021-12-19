@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import space.ardyc.game_gdx.ai_core.GeneticCore;
+import space.ardyc.game_gdx.ai_core.NeuralBrain;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,7 +60,7 @@ public class Game extends ApplicationAdapter {
         batch = new SpriteBatch();
         font = new BitmapFont();
 
-        font.setColor(0,0,0,1);
+        font.setColor(0, 0, 0, 1);
 
         tubeTDR = new Rectangle(500, -300, 80, 486);
         tubeTUR = new Rectangle(500, 400, 80, 486);
@@ -88,7 +89,7 @@ public class Game extends ApplicationAdapter {
                 }
             }
         }
-        if (nowPopulation == 0 | Gdx.input.isKeyPressed(Input.Keys.SPACE) ) {
+        if (nowPopulation == 0 | Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             nowGeneration++;
             nowResult = 0;
             birds = core.getNewGen(birds);
@@ -96,7 +97,7 @@ public class Game extends ApplicationAdapter {
             tubeTUR.x = -100;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.S) ) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             nowGeneration++;
             nowResult = 0;
             birds = core.getBestGen(birds);
@@ -114,6 +115,7 @@ public class Game extends ApplicationAdapter {
 
         batch.end();
 
+        drawAddons();
 
         moveTubes();
     }
@@ -139,7 +141,123 @@ public class Game extends ApplicationAdapter {
             tubeTUR.y = TUBE_OFFSET + ((int) (Math.random() * (HEIGHT - TUBE_OFFSET - TUBE_OFFSET)));
             tubeTDR.y = tubeTUR.y - TUBE_OFFSET - tubeTDR.height;
             nowResult++;
+            for (Bird b : birds) {
+                if (b.isAlive())
+                    b.addFit(1000);
+            }
         }
+    }
+
+    private void drawAddons() {
+        renderer.setColor(0, 0, 0, 1);
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        Bird b = birds.get(0);
+        for (Bird bird : birds) {
+            if (bird.isAlive()) {
+                renderer.rectLine(bird.getBox().x + bird.getBox().width, bird.getBox().y + b.getBox().height / 2, tubeTDR.x, tubeTDR.y + tubeTDR.height, 2);
+                renderer.rectLine(bird.getBox().x + bird.getBox().width, bird.getBox().y + b.getBox().height / 2, tubeTUR.x, tubeTUR.y, 2);
+                b = bird;
+            }
+        }
+
+
+        NeuralBrain bird = b.getBrain();
+        {
+            renderer.circle(340, 550, 5);
+            renderer.circle(340, 530, 5);
+            renderer.circle(380, 560, 5);
+            renderer.circle(380, 540, 5);
+            renderer.circle(380, 520, 5);
+            renderer.circle(420, 550, 5);
+            renderer.circle(420, 530, 5);
+        }
+        {
+            if (bird.l0weight[0] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(340, 550, 380, 560, 2);
+
+            if (bird.l0weight[1] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(340, 550, 380, 540, 2);
+
+            if (bird.l0weight[2] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(340, 550, 380, 520, 2);
+
+            if (bird.l0weight[3] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(340, 530, 380, 560, 2);
+
+            if (bird.l0weight[4] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(340, 530, 380, 540, 2);
+
+            if (bird.l0weight[5] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(340, 530, 380, 520, 2);
+
+            if (bird.l1weight[0] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(380, 560, 420, 550, 2);
+
+            if (bird.l1weight[1] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(380, 560, 420, 530, 2);
+
+            if (bird.l1weight[2] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(380, 540, 420, 550, 2);
+
+            if (bird.l1weight[3] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(380, 540, 420, 530, 2);
+
+            if (bird.l1weight[4] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(380, 520, 420, 550, 2);
+
+            if (bird.l1weight[5] > 0) {
+                renderer.setColor(1, 0, 0, 1);
+            } else {
+                renderer.setColor(0, 0, 1, 1);
+            }
+            renderer.rectLine(380, 520, 420, 530, 2);
+        }
+
+        renderer.end();
     }
 
 }

@@ -1,6 +1,7 @@
 package space.ardyc.game_gdx.ai_core;
 
 import space.ardyc.game_gdx.Bird;
+
 import java.util.ArrayList;
 
 /**
@@ -20,6 +21,7 @@ public class GeneticCore {
 
     /**
      * Get new generation
+     *
      * @param players old generation
      * @return new generation
      */
@@ -41,12 +43,17 @@ public class GeneticCore {
             }
         }
 
+        int sum = 0;
+        for (Bird b : players) {
+            sum += b.getFit();
+        }
 
         NeuralBrain n;
         for (int i = 0; i < playersCount; i++) {
             n = new NeuralBrain();
             for (int j = 0; j < 12; j++) {
-                n.setWeight(j, players.get((int) (Math.random() * bestCount)).getBrain().getWeight(j));
+//                n.setWeight(j, players.get((int)(Math.random() * bestCount)).getBrain().getWeight(j));
+                n.setWeight(j, getRandomWithWeights(players, sum).getBrain().getWeight(j));
 
                 if ((int) (Math.random() * 20) == 5) {
                     n.setWeight(j, Math.random() * 8 - 4);
@@ -61,6 +68,7 @@ public class GeneticCore {
 
     /**
      * Get generation from best birds
+     *
      * @param players old generation
      * @return best generation
      */
@@ -94,6 +102,16 @@ public class GeneticCore {
 
         return newGen;
 
+    }
+
+    private Bird getRandomWithWeights(ArrayList<Bird> birds, int allFit) {
+        int fit = (int) (Math.random() * allFit);
+        for (Bird b : birds) {
+            fit -= b.getFit();
+            if (fit <= 0)
+                return b;
+        }
+        return null;
     }
 
 }

@@ -65,11 +65,13 @@ public class Bird {
 
     /**
      * Getting action
+     *
      * @param dU distance to upper tube
      * @param dD distance to downer tube
      */
     public void action(float dU, float dD) {
         if (actionTimeOut <= 0) {
+            addFit(1);
             if (brain.isJump(getDistanceU(dU), getDistanceD(dD)))
                 translateUp();
         } else {
@@ -103,11 +105,10 @@ public class Bird {
 
     /**
      * Getting alive value, add fit if alive
+     *
      * @return alive
      */
     public boolean isAlive() {
-        if (alive)
-            fit += 1;
         return alive;
     }
 
@@ -125,6 +126,7 @@ public class Bird {
 
     /**
      * Get distance to upper tube
+     *
      * @param pos upper tube pos
      * @return distance to upper tube
      */
@@ -134,10 +136,19 @@ public class Bird {
 
     /**
      * Get distance to downer tube
+     *
      * @param pos downer tube pos
      * @return distance to downer tube
      */
     private float getDistanceD(float pos) {
         return pos - getBox().y;
+    }
+
+    public void addFit() {
+        fit++;
+    }
+
+    public void addFit(int amount) {
+        fit += amount;
     }
 }
