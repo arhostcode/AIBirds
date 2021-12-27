@@ -9,87 +9,79 @@ import java.util.Arrays;
 
 public class NeuralBrain {
 
-    public double[] l0 = new double[2];
-    public double[] l1 = new double[3];
-    public double[] l2 = new double[2];
+    public static final int INPUT_LAYER_NEURON_COUNT = 2;
+    public static final int OUTPUT_LAYER_NEURON_COUNT = 2;
+    public static final int HIDDEN_LAYER_NEURON_COUNT = 3;
 
-    public double[] l0weight = new double[6];
-    public double[] l1weight = new double[6];
+    private final int RANDOM_WEIGHT_OFFSET = 4;
 
-    /**
-     * Getting action
-     * @param d1 distance to upper tube
-     * @param d2 distance to downer tube
-     * @return boolean jump or not
-     */
+    public double[] layer0 = new double[INPUT_LAYER_NEURON_COUNT];
+    public double[] layer1 = new double[HIDDEN_LAYER_NEURON_COUNT];
+    public double[] layer2 = new double[OUTPUT_LAYER_NEURON_COUNT];
 
-    public boolean isJump(float d1, float d2) {
-        zeros();
-        l0[0] = d1;
-        l0[1] = d2;
+    public double[] layer1Weights = new double[INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT];
+    public double[] layer2Weights = new double[OUTPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT];
 
-        int k = 0;
+    public boolean isJump(float distanceToUpperPipe, float distanceToLowerPipe) {
+        fillWeightsArraysWithZero();
+        layer0[0] = distanceToUpperPipe;
+        layer0[1] = distanceToLowerPipe;
 
-        for (int i = 0; i < l1.length; i++) {
-            for (double v : l0) {
-                l1[i] += v * l0weight[k];
-                k += 1;
+        calculateHiddenLayerNeurons();
+        calculateOutputLayerNeurons();
+
+        return layer2[0] > layer2[1];
+    }
+
+    private void calculateHiddenLayerNeurons() {
+        int weightIterator = 0;
+        for (int i = 0; i < layer1.length; i++) {
+            for (double layer0NeuronValue : layer0) {
+                layer1[i] += layer0NeuronValue * layer1Weights[weightIterator];
+                weightIterator += 1;
             }
         }
+    }
 
-        k = 0;
-        for (int i = 0; i < l2.length; i++) {
-            for (double v : l1) {
-                l2[i] += v * l1weight[k];
-                k += 1;
+    private void calculateOutputLayerNeurons() {
+        int weightIterator = 0;
+        for (int i = 0; i < layer2.length; i++) {
+            for (double layer1NeuronValue : layer1) {
+                layer2[i] += layer1NeuronValue * layer2Weights[weightIterator];
+                weightIterator += 1;
             }
         }
-
-        return l2[0] > l2[1];
     }
 
-    /**
-     * Randomizing weights
-     */
-    public void randomize() {
-        for (int i = 0; i < l0weight.length; i++) {
-            l0weight[i] = Math.random() * 8 - 4;
+
+    public void randomizeWeights() {
+        for (int i = 0; i < layer1Weights.length; i++) {
+            layer1Weights[i] = Math.random() * (RANDOM_WEIGHT_OFFSET * 2) - RANDOM_WEIGHT_OFFSET;
         }
-        for (int i = 0; i < l1weight.length; i++) {
-            l1weight[i] = Math.random() * 8 - 4;
+        for (int i = 0; i < layer2Weights.length; i++) {
+            layer2Weights[i] = Math.random() * (RANDOM_WEIGHT_OFFSET * 2) - RANDOM_WEIGHT_OFFSET;
         }
 
     }
 
-    /**
-     * Get weights
-     * @param i weight id
-     * @return weight value
-     */
-    public double getWeight(int i) {
-        if (i < 6)
-            return l0weight[i];
-        else
-            return l1weight[i - 6];
+    public double getWeight(int weightID) {
+        if (weightID < INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT)
+            return layer1Weights[weightID];
+        else if (weightID < INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT + HIDDEN_LAYER_NEURON_COUNT * OUTPUT_LAYER_NEURON_COUNT)
+            return layer2Weights[weightID - INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT];
+        else throw new ArrayIndexOutOfBoundsException("Goes beyond the arrays of weights");
     }
 
-    /**
-     * Setting weight
-     * @param i weight id
-     * @param w weight value
-     */
-    public void setWeight(int i, double w) {
-        if (i < 6)
-            l0weight[i] = w;
-        else
-            l1weight[i - 6] = w;
+    public void setWeight(int weightID, double weightValue) {
+        if (weightID < INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT)
+            layer1Weights[weightID] = weightValue;
+        else if (weightID < INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT + HIDDEN_LAYER_NEURON_COUNT * OUTPUT_LAYER_NEURON_COUNT)
+            layer2Weights[weightID - INPUT_LAYER_NEURON_COUNT * HIDDEN_LAYER_NEURON_COUNT] = weightValue;
+        else throw new ArrayIndexOutOfBoundsException("Goes beyond the arrays of weights");
     }
 
-    /**
-     * Fill neurons values zeros
-     */
-    private void zeros() {
-        Arrays.fill(l1, 0);
-        Arrays.fill(l2, 0);
+    private void fillWeightsArraysWithZero() {
+        Arrays.fill(layer1, 0);
+        Arrays.fill(layer2, 0);
     }
 }

@@ -1,7 +1,9 @@
 package space.ardyc.game_gdx;
 
 import com.badlogic.gdx.math.Rectangle;
+import space.ardyc.game_gdx.ai_core.GeneticCore;
 import space.ardyc.game_gdx.ai_core.NeuralBrain;
+import space.ardyc.game_gdx.utils.BirdCharacteristic;
 
 /**
  * @author Ardyc
@@ -10,110 +12,73 @@ import space.ardyc.game_gdx.ai_core.NeuralBrain;
 
 public class Bird {
 
-    private Rectangle bird_box;
+    private final int MOVING_DOWN_AMOUNT = 2;
+    private final int MOVING_UP_AMOUNT = 20;
+    private final int MOVING_UP_ACTION_TIME_AMOUNT = 3;
+
+    private final Rectangle boundingBox;
     private boolean alive = true;
     private int fit = 0;
     private NeuralBrain brain;
     private int actionTimeOut = 0;
 
-    public Bird(int x, int y, int width, int height) {
-        bird_box = new Rectangle();
-        bird_box.height = height;
-        bird_box.width = width;
-        bird_box.y = y;
-        bird_box.x = x;
-        brain = new NeuralBrain();
-        brain.randomize();
+    public Bird(BirdCharacteristic characteristic) {
+        boundingBox = new Rectangle();
+        boundingBox.height = characteristic.getHeight();
+        boundingBox.width = characteristic.getWidth();
+        boundingBox.y = characteristic.getStartPosition().getY();
+        boundingBox.x = characteristic.getStartPosition().getX();
     }
 
-    public Bird(int x, int y, int width, int height, NeuralBrain brain) {
-        bird_box = new Rectangle();
-        bird_box.height = height;
-        bird_box.width = width;
-        bird_box.y = y;
-        bird_box.x = x;
+    public Bird(BirdCharacteristic characteristic, NeuralBrain brain) {
+        this(characteristic);
         this.brain = brain;
     }
 
     public Bird(NeuralBrain brain) {
-        bird_box = new Rectangle();
-        bird_box.height = Game.type.getBox().height;
-        bird_box.width = Game.type.getBox().width;
-        bird_box.y = Game.type.getBox().y;
-        bird_box.x = Game.type.getBox().x;
-        this.brain = brain;
-    }
-
-    public Bird(NeuralBrain brain, int randomOffset) {
-        bird_box = new Rectangle();
-        bird_box.height = Game.type.getBox().height;
-        bird_box.width = Game.type.getBox().width;
-        bird_box.y = Game.type.getBox().y + ((int) (Math.random() * (2 * randomOffset)) - randomOffset);
-        bird_box.x = Game.type.getBox().x;
+        this(BirdCharacteristic.createDefaultCharacteristic());
         this.brain = brain;
     }
 
     public Bird() {
-        bird_box = new Rectangle();
-        bird_box.height = Game.type.getBox().height;
-        bird_box.width = Game.type.getBox().width;
-        bird_box.y = Game.type.getBox().y;
-        bird_box.x = Game.type.getBox().x;
+        this(BirdCharacteristic.createDefaultCharacteristic());
         brain = new NeuralBrain();
-        brain.randomize();
+        brain.randomizeWeights();
     }
 
-    /**
-     * Getting action
-     *
-     * @param dU distance to upper tube
-     * @param dD distance to downer tube
-     */
-    public void action(float dU, float dD) {
+    public void action(float upperPipePositionY, float lowerPipePositionY) {
         if (actionTimeOut <= 0) {
-            addFit(1);
-            if (brain.isJump(getDistanceU(dU), getDistanceD(dD)))
-                translateUp();
+            addFit(GeneticCore.JUMP_FIT);
+            if (brain.isJump(getDistanceUpperPipe(upperPipePositionY), getDistanceLowerPipe(lowerPipePositionY)))
+                jump();
         } else {
             actionTimeOut -= 1;
         }
     }
 
+    public boolean isCollided(Rectangle lowerPipe, Rectangle upperPipe){
+        return getBox().overlaps(lowerPipe) | getBox().overlaps(upperPipe) | getBox().y < 0 | getBox().y + getBox().height > Game.HEIGHT;
+    }
 
-    /**
-     * Set alive - false
-     */
     public void destroy() {
         alive = false;
     }
 
-    /**
-     * Translate down
-     */
-    public void translateDown() {
-        bird_box.y -= 2;
+    public void fall() {
+        boundingBox.y -= MOVING_DOWN_AMOUNT;
     }
 
-    /**
-     * Translate up
-     */
-    public void translateUp() {
-        actionTimeOut = 3;
-        bird_box.y += 20;
+    public void jump() {
+        actionTimeOut = MOVING_UP_ACTION_TIME_AMOUNT;
+        boundingBox.y += MOVING_UP_AMOUNT;
     }
 
-
-    /**
-     * Getting alive value, add fit if alive
-     *
-     * @return alive
-     */
     public boolean isAlive() {
         return alive;
     }
 
     public Rectangle getBox() {
-        return bird_box;
+        return boundingBox;
     }
 
     public int getFit() {
@@ -124,24 +89,12 @@ public class Bird {
         return brain;
     }
 
-    /**
-     * Get distance to upper tube
-     *
-     * @param pos upper tube pos
-     * @return distance to upper tube
-     */
-    private float getDistanceU(float pos) {
-        return pos - getBox().y + getBox().height;
+    private float getDistanceUpperPipe(float pipeY) {
+        return pipeY - getBox().y + getBox().height;
     }
 
-    /**
-     * Get distance to downer tube
-     *
-     * @param pos downer tube pos
-     * @return distance to downer tube
-     */
-    private float getDistanceD(float pos) {
-        return pos - getBox().y;
+    private float getDistanceLowerPipe(float pipeY) {
+        return pipeY - getBox().y;
     }
 
     public void addFit() {

@@ -11,97 +11,18 @@ import java.util.ArrayList;
 
 public class GeneticCore {
 
-    public int playersCount = 10;
-    public int bestCount = 5;
+    public static final int JUMP_FIT = 1;
+    public static final int MOVING_OUT_OF_PIPE_FIT = 1000;
 
-    public GeneticCore(int playersCount, int bestCount) {
-        this.playersCount = playersCount;
-        this.bestCount = bestCount;
+    private int birdsCount;
+
+    public GeneticCore(int birdsCount) {
+        this.birdsCount = birdsCount;
     }
 
-    /**
-     * Get new generation
-     *
-     * @param players old generation
-     * @return new generation
-     */
-    public ArrayList<Bird> getNewGen(ArrayList<Bird> players) {
-
-        ArrayList<Bird> newGen = new ArrayList<>();
-
-        boolean sort = true;
-        Bird s;
-        while (sort) {
-            sort = false;
-            for (int i = 0; i < players.size() - 1; i++) {
-                if (players.get(i).getFit() < players.get(i + 1).getFit()) {
-                    s = players.get(i);
-                    players.set(i, players.get(i + 1));
-                    players.set(i + 1, s);
-                    sort = true;
-                }
-            }
-        }
-
-        int sum = 0;
-        for (Bird b : players) {
-            sum += b.getFit();
-        }
-
-        NeuralBrain n;
-        for (int i = 0; i < playersCount; i++) {
-            n = new NeuralBrain();
-            for (int j = 0; j < 12; j++) {
-//                n.setWeight(j, players.get((int)(Math.random() * bestCount)).getBrain().getWeight(j));
-                n.setWeight(j, getRandomWithWeights(players, sum).getBrain().getWeight(j));
-
-                if ((int) (Math.random() * 20) == 5) {
-                    n.setWeight(j, Math.random() * 8 - 4);
-                }
-            }
-            newGen.add(new Bird(n));
-        }
-
-        return newGen;
-
-    }
-
-    /**
-     * Get generation from best birds
-     *
-     * @param players old generation
-     * @return best generation
-     */
-
-    public ArrayList<Bird> getBestGen(ArrayList<Bird> players) {
-
-        ArrayList<Bird> newGen = new ArrayList<>();
-
-        boolean sort = true;
-        Bird s;
-        while (sort) {
-            sort = false;
-            for (int i = 0; i < players.size() - 1; i++) {
-                if (players.get(i).getFit() < players.get(i + 1).getFit()) {
-                    s = players.get(i);
-                    players.set(i, players.get(i + 1));
-                    players.set(i + 1, s);
-                    sort = true;
-                }
-            }
-        }
-
-        NeuralBrain n;
-        for (int i = 0; i < playersCount; i++) {
-            n = new NeuralBrain();
-            for (int j = 0; j < 12; j++) {
-                n.setWeight(j, players.get(0).getBrain().getWeight(j));
-            }
-            newGen.add(new Bird(n, 40));
-        }
-
-        return newGen;
-
+    public ArrayList<Bird> getNewPopulation(ArrayList<Bird> birds) {
+        sort(birds);
+        return createNewPopulation(birds);
     }
 
     private Bird getRandomWithWeights(ArrayList<Bird> birds, int allFit) {
@@ -112,6 +33,46 @@ public class GeneticCore {
                 return b;
         }
         return null;
+    }
+
+    private ArrayList<Bird> createNewPopulation(ArrayList<Bird> birds){
+        ArrayList<Bird> newGen = new ArrayList<>();
+        int fitSum = calculateFitSum(birds);
+        NeuralBrain n;
+        for (int i = 0; i < birdsCount; i++) {
+            n = new NeuralBrain();
+            for (int j = 0; j < 12; j++) {
+                n.setWeight(j, getRandomWithWeights(birds, fitSum).getBrain().getWeight(j));
+
+                if ((int) (Math.random() * 20) == 5) {
+                    n.setWeight(j, Math.random() * 8 - 4);
+                }
+            }
+            newGen.add(new Bird(n));
+        }
+        return newGen;
+    }
+
+    private int calculateFitSum(ArrayList<Bird> birds){
+        int fitSum = 0;
+        for (Bird b : birds) {
+            fitSum += b.getFit();
+        }
+        return fitSum;
+    }
+
+    private static ArrayList<Bird> sort(ArrayList<Bird> birds){
+        Bird s;
+        for (int out = birds.size() - 1; out >= 1; out--){
+            for (int in = 0; in < out; in++){
+                if (birds.get(in).getFit() < birds.get(in + 1).getFit()) {
+                    s = birds.get(in);
+                    birds.set(in, birds.get(in + 1));
+                    birds.set(in + 1, s);
+                }
+            }
+        }
+        return birds;
     }
 
 }
