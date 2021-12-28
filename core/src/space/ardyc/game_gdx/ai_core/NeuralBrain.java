@@ -53,7 +53,6 @@ public class NeuralBrain {
         }
     }
 
-
     public void randomizeWeights() {
         for (int i = 0; i < layer1Weights.length; i++) {
             layer1Weights[i] = Math.random() * (RANDOM_WEIGHT_OFFSET * 2) - RANDOM_WEIGHT_OFFSET;

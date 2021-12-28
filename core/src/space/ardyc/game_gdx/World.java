@@ -46,6 +46,28 @@ public class World {
         createPipes();
     }
 
+    private void loadTextures() {
+        birdTexture = new Texture("flappy.png");
+        lowerPipeTexture = new Texture("tube_down.png");
+        upperPipeTexture = new Texture("tube_up.png");
+    }
+
+    private void createPipes() {
+        lowerPipeBoundingBox = new Rectangle(500, -300, 80, 486);
+        upperPipeBoundingBox = new Rectangle(500, 400, 80, 486);
+    }
+
+    private void initFontRenderer() {
+        fontRenderer = new BitmapFont();
+        fontRenderer.setColor(0, 0, 0, 1);
+    }
+
+    private void initFirstPopulation() {
+        for (int i = 0; i < Game.POPULATION; i++) {
+            birdsList.add(new Bird());
+        }
+    }
+
     public void render() {
         ScreenUtils.clear(1, 1, 1, 1);
         spriteRenderer.begin();
@@ -107,24 +129,6 @@ public class World {
         spriteRenderer.draw(upperPipeTexture, upperPipeBoundingBox.x, upperPipeBoundingBox.y, upperPipeBoundingBox.width, upperPipeBoundingBox.height);
     }
 
-    private void loadTextures() {
-        birdTexture = new Texture("flappy.png");
-        lowerPipeTexture = new Texture("tube_down.png");
-        upperPipeTexture = new Texture("tube_up.png");
-    }
-
-    private void createPipes() {
-        lowerPipeBoundingBox = new Rectangle(500, -300, 80, 486);
-        upperPipeBoundingBox = new Rectangle(500, 400, 80, 486);
-    }
-
-    public void dispose() {
-        spriteRenderer.dispose();
-        birdTexture.dispose();
-        lowerPipeTexture.dispose();
-        upperPipeTexture.dispose();
-    }
-
     private void moveEnvironment() {
         lowerPipeBoundingBox.x -= PIPE_MOVE_AMOUNT;
         upperPipeBoundingBox.x -= PIPE_MOVE_AMOUNT;
@@ -151,15 +155,11 @@ public class World {
         }
     }
 
-    private void initFontRenderer() {
-        fontRenderer = new BitmapFont();
-        fontRenderer.setColor(0, 0, 0, 1);
-    }
-
-    private void initFirstPopulation() {
-        for (int i = 0; i < Game.POPULATION; i++) {
-            birdsList.add(new Bird());
-        }
+    public void dispose() {
+        spriteRenderer.dispose();
+        birdTexture.dispose();
+        lowerPipeTexture.dispose();
+        upperPipeTexture.dispose();
     }
 
 }

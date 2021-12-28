@@ -41,9 +41,8 @@ public class GeneticCore {
         NeuralBrain n;
         for (int i = 0; i < birdsCount; i++) {
             n = new NeuralBrain();
-            for (int j = 0; j < 12; j++) {
+            for (int j = 0; j < NeuralBrain.INPUT_LAYER_NEURON_COUNT * NeuralBrain.HIDDEN_LAYER_NEURON_COUNT + NeuralBrain.HIDDEN_LAYER_NEURON_COUNT * NeuralBrain.OUTPUT_LAYER_NEURON_COUNT; j++) {
                 n.setWeight(j, getRandomWithWeights(birds, fitSum).getBrain().getWeight(j));
-
                 if ((int) (Math.random() * 20) == 5) {
                     n.setWeight(j, Math.random() * 8 - 4);
                 }
