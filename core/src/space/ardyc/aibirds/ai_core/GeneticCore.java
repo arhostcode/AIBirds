@@ -1,6 +1,6 @@
-package space.ardyc.game_gdx.ai_core;
+package space.ardyc.aibirds.ai_core;
 
-import space.ardyc.game_gdx.Bird;
+import space.ardyc.aibirds.bird.Bird;
 
 import java.util.ArrayList;
 

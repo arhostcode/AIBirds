@@ -1,8 +1,8 @@
-package space.ardyc.game_gdx.utils;
+package space.ardyc.aibirds.utils;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import space.ardyc.game_gdx.Bird;
-import space.ardyc.game_gdx.ai_core.NeuralBrain;
+import space.ardyc.aibirds.bird.Bird;
+import space.ardyc.aibirds.ai_core.NeuralBrain;
 
 import java.util.ArrayList;
 
@@ -30,6 +30,7 @@ public class AddonsRender {
 
     public void render(ArrayList<Bird> birds) {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
+        renderer.setColor(0,0,0,1);
         renderNeuralNetwork();
         renderConnections(getAlive(birds).getBrain());
         renderer.end();

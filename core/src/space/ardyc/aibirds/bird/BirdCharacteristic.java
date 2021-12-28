@@ -1,4 +1,6 @@
-package space.ardyc.game_gdx.utils;
+package space.ardyc.aibirds.bird;
+
+import space.ardyc.aibirds.utils.Point;
 
 public class BirdCharacteristic {
 

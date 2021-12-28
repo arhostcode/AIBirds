@@ -1,9 +1,10 @@
-package space.ardyc.game_gdx;
+package space.ardyc.aibirds.bird;
 
 import com.badlogic.gdx.math.Rectangle;
-import space.ardyc.game_gdx.ai_core.GeneticCore;
-import space.ardyc.game_gdx.ai_core.NeuralBrain;
-import space.ardyc.game_gdx.utils.BirdCharacteristic;
+import space.ardyc.aibirds.Game;
+import space.ardyc.aibirds.ai_core.GeneticCore;
+import space.ardyc.aibirds.ai_core.NeuralBrain;
+import space.ardyc.aibirds.bird.BirdCharacteristic;
 
 /**
  * @author Ardyc
@@ -28,11 +29,6 @@ public class Bird {
         boundingBox.width = characteristic.getWidth();
         boundingBox.y = characteristic.getStartPosition().getY();
         boundingBox.x = characteristic.getStartPosition().getX();
-    }
-
-    public Bird(BirdCharacteristic characteristic, NeuralBrain brain) {
-        this(characteristic);
-        this.brain = brain;
     }
 
     public Bird(NeuralBrain brain) {
@@ -95,10 +91,6 @@ public class Bird {
 
     private float getDistanceLowerPipe(float pipeY) {
         return pipeY - getBox().y;
-    }
-
-    public void addFit() {
-        fit++;
     }
 
     public void addFit(int amount) {

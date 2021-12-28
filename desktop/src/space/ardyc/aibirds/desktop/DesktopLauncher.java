@@ -1,8 +1,8 @@
-package space.ardyc.game_gdx.desktop;
+package space.ardyc.aibirds.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import space.ardyc.game_gdx.Game;
+import space.ardyc.aibirds.Game;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

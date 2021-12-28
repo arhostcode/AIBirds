@@ -1,4 +1,4 @@
-package space.ardyc.game_gdx.utils;
+package space.ardyc.aibirds.utils;
 
 public class Point {
 
