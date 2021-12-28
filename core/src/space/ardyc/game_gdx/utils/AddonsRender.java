@@ -13,15 +13,9 @@ public class AddonsRender {
 
     private ShapeRenderer renderer;
     private Point startPosition;
-    private ArrayList<Bird> birds;
 
-    public static void render(Point position, ArrayList<Bird> birds) {
-        new AddonsRender(position, birds).render();
-    }
-
-    private AddonsRender(Point startPosition, ArrayList<Bird> birds) {
+    public AddonsRender(Point startPosition) {
         this.startPosition = startPosition;
-        this.birds = birds;
         initRenderer();
     }
 
@@ -30,10 +24,14 @@ public class AddonsRender {
         renderer.setColor(0, 0, 0, 1);
     }
 
-    private void render() {
+    public void dispose(){
+        renderer.dispose();
+    }
+
+    public void render(ArrayList<Bird> birds) {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderNeuralNetwork();
-        renderConnections(getAlive().getBrain());
+        renderConnections(getAlive(birds).getBrain());
         renderer.end();
     }
 
@@ -135,7 +133,7 @@ public class AddonsRender {
         renderer.rectLine(380, 520, 420, 530, 2);
     }
 
-    private Bird getAlive() {
+    private Bird getAlive(ArrayList<Bird> birds) {
         for (Bird bird : birds) {
             if (bird.isAlive()) {
                 return bird;

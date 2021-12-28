@@ -14,18 +14,12 @@ public class GeneticCore {
     public static final int JUMP_FIT = 1;
     public static final int MOVING_OUT_OF_PIPE_FIT = 1000;
 
-    private int birdsCount;
-
-    public GeneticCore(int birdsCount) {
-        this.birdsCount = birdsCount;
-    }
-
-    public ArrayList<Bird> getNewPopulation(ArrayList<Bird> birds) {
+    public static ArrayList<Bird> getNewPopulation(ArrayList<Bird> birds) {
         sort(birds);
         return createNewPopulation(birds);
     }
 
-    private Bird getRandomWithWeights(ArrayList<Bird> birds, int allFit) {
+    private static Bird getRandomWithWeights(ArrayList<Bird> birds, int allFit) {
         int fit = (int) (Math.random() * allFit);
         for (Bird b : birds) {
             fit -= b.getFit();
@@ -35,11 +29,11 @@ public class GeneticCore {
         return null;
     }
 
-    private ArrayList<Bird> createNewPopulation(ArrayList<Bird> birds){
+    private static ArrayList<Bird> createNewPopulation(ArrayList<Bird> birds){
         ArrayList<Bird> newGen = new ArrayList<>();
         int fitSum = calculateFitSum(birds);
         NeuralBrain n;
-        for (int i = 0; i < birdsCount; i++) {
+        for (int i = 0; i < birds.size(); i++) {
             n = new NeuralBrain();
             for (int j = 0; j < NeuralBrain.INPUT_LAYER_NEURON_COUNT * NeuralBrain.HIDDEN_LAYER_NEURON_COUNT + NeuralBrain.HIDDEN_LAYER_NEURON_COUNT * NeuralBrain.OUTPUT_LAYER_NEURON_COUNT; j++) {
                 n.setWeight(j, getRandomWithWeights(birds, fitSum).getBrain().getWeight(j));
@@ -52,7 +46,7 @@ public class GeneticCore {
         return newGen;
     }
 
-    private int calculateFitSum(ArrayList<Bird> birds){
+    private static int calculateFitSum(ArrayList<Bird> birds){
         int fitSum = 0;
         for (Bird b : birds) {
             fitSum += b.getFit();

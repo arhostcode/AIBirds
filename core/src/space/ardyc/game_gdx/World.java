@@ -22,12 +22,11 @@ public class World {
 
     private SpriteBatch spriteRenderer;
     private BitmapFont fontRenderer;
+    private AddonsRender addonsRender;
 
     private Texture birdTexture;
     private Texture lowerPipeTexture;
     private Texture upperPipeTexture;
-
-    private GeneticCore geneticCore;
 
     private Rectangle lowerPipeBoundingBox;
     private Rectangle upperPipeBoundingBox;
@@ -38,8 +37,8 @@ public class World {
     private int nowGenerationNumber = 0;
 
     public void create() {
-        geneticCore = new GeneticCore(Game.POPULATION);
         spriteRenderer = new SpriteBatch();
+        addonsRender = new AddonsRender(new Point(340, 550));
         initFirstPopulation();
         loadTextures();
         initFontRenderer();
@@ -96,9 +95,10 @@ public class World {
         renderTextInfo();
         spriteRenderer.end();
 
-        AddonsRender.render(new Point(340, 550), birdsList);
+        addonsRender.render(birdsList);
 
         moveEnvironment();
+
     }
 
     private void checkKeyPressing() {
@@ -109,7 +109,7 @@ public class World {
     private void updatePopulation() {
         nowGenerationNumber++;
         nowPopulationResult = 0;
-        birdsList = geneticCore.getNewPopulation(birdsList);
+        birdsList = GeneticCore.getNewPopulation(birdsList);
         lowerPipeBoundingBox.x = OVER_SCREEN_OFFSET;
         upperPipeBoundingBox.x = OVER_SCREEN_OFFSET;
     }
@@ -157,9 +157,11 @@ public class World {
 
     public void dispose() {
         spriteRenderer.dispose();
+        fontRenderer.dispose();
         birdTexture.dispose();
         lowerPipeTexture.dispose();
         upperPipeTexture.dispose();
+        addonsRender.dispose();
     }
 
 }
